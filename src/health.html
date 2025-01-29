@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM2.5 in Thailand</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    container:{
+                        center: true,
+                        padding: '1rem',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <nav class="shadow-md bg-white">
+        <div class="container mx-auto flex justify-between items-center py-4 px-4 md:px-8">
+            <div class="flex items-center">
+                <a class="flex items-center" href="/src/map.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="3em" height="3em" viewBox="0 0 32 32">
+                        <g fill="none">
+                            <path fill="#75f2f3" d="M4.45 6.52a.47.47 0 0 1-.35-.15c-.2-.2-.2-.51 0-.71C6.47 3.3 9.61 2 12.96 2c1.23 0 2.46.18 3.63.54a.5.5 0 0 1 .33.62c-.08.27-.36.42-.62.33A11.8 11.8 0 0 0 12.96 3C9.88 3 6.98 4.2 4.81 6.38c-.1.1-.23.14-.36.14"/>
+                            <path fill="#75f2f3" d="M2.5 16.48c-.28 0-.5-.22-.5-.5C2 9.94 6.92 5.02 12.96 5.02c.28 0 .5.22.5.5s-.22.5-.5.5C7.47 6.02 3 10.49 3 15.98c0 .28-.22.5-.5.5m19.81 0c0 .28.22.5.5.5c1.49 0 2.92-.45 4.13-1.31A7.2 7.2 0 0 0 30 9.78c0-.27-.22-.5-.5-.5s-.5.22-.5.5c0 2.02-.99 3.91-2.63 5.08a6.2 6.2 0 0 1-3.56 1.12c-.28 0-.5.22-.5.5"/>
+                            <path fill="#00d26a" d="M28 6.43V4.48l-.69.52h-5.35c-4.17 0-7.55 3.53-7.55 7.7v.43c0 .47.38.85.85.85h5.19A7.55 7.55 0 0 0 28 6.43M5 18.88v-2.87L6 17h7.89c6.15 0 11.14 4.99 11.14 11.14v.63c0 .69-.56 1.25-1.25 1.25h-7.64C9.99 30.02 5 25.03 5 18.88"/>
+                            <path fill="#008463" d="M18.67 11.35a.514.514 0 0 1-.69-.21a.5.5 0 0 1 .2-.69l8.08-4.41c.44-.25.72-.71.72-1.22V2.53c0-.28.23-.51.51-.51s.51.23.51.51v2.3c0 .88-.48 1.68-1.25 2.11zm.08 14.77q.18.09.36.09c.26 0 .52-.14.65-.39c.2-.37.06-.82-.3-1.02l-11.9-6.5a2.05 2.05 0 0 1-1.06-1.79v-3.38c0-.41-.34-.75-.75-.75s-.75.34-.75.75v3.38c0 1.3.71 2.49 1.85 3.11z"/>
+                        </g>
+                    </svg>
+                    <span class="text-2xl font-bold ml-2">LomHaiJai</span>
+                </a>
+            </div>
+            <button id="menu-toggle" class="block md:hidden focus:outline-none" aria-expanded="false" aria-controls="menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 16 16"><path fill="none" stroke="#676f71" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.75 12.25h10.5m-10.5-4h10.5m-10.5-4h10.5"/></svg>
+            </button>
+            <div id="menu" class="hidden md:flex flex-col md:flex-row md:gap-5 absolute md:static bg-white w-full md:w-auto left-0 top-16 md:top-auto shadow-md md:shadow-none md:text-center">
+                <ul class="flex flex-col md:flex-row md:gap-5">
+                    <a href="/src/map.html" class="px-3 py-2 rounded-md text-gray-700 hover:bg-blue-400 hover:text-white transition duration-300">แผนที่คุณภาพอากาศ</a>
+                    <a href="/src/info.html" class="px-3 py-2 rounded-md text-gray-700 hover:bg-blue-400 hover:text-white transition duration-300">ข้อมูลคุณภาพอากาศ</a>
+                    <a href="/src/health.html" class="px-3 py-2 rounded-md text-gray-700 hover:bg-blue-400 hover:text-white transition duration-300">การดูแลสุขภาพ</a>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section>
+        <div class="container">
+            <h1 class="text-xl font-bold text-center mt-5">วิธีการดูแลตนเองให้ปลอดภัยจากฝุ่น PM2.5</h1>
+            <img class="h-64 mx-auto" src="/img/doctor.png" alt="">
+            <p class="text-md font-bold mt-3 ">อาการผิดปกติที่อาจเกิดขึ้น</p>
+            <p class="text-gray-700">หากได้รับฝุ่น PM2.5 ฝุ่น PM2.5 สามารถเข้าสู่ร่างกายจากหลอดลมและเดินทางไปยังหลอดเลือด และกระจายไปส่วนต่าง ๆ ทั่วร่างกาย หากร่างกายได้รับฝุ่นนี้เป็นเวลานานจนเกิดการสะสม จะทำให้เกิดอันตรายต่อสุขภาพ โดยผู้ที่ได้รับฝุ่น PM 2.5 มักมีอาการไอเรื้อรัง ระคายเคืองตา คัดจมูก แน่นหน้าอก หายใจไม่สะดวก ผิวหนังเป็นตุ่มหรือผื่นนูนแดง เป็นต้น และกลุ่มเสี่ยงที่ควรได้รับการดูแลเป็นพิเศษ ได้แก่ เด็ก หญิงตั้งครรภ์ ผู้สูงอายุ ผู้ป่วยโรคปอดเรื้อรัง ผู้ป่วยโรคหลอดเลือดหัวใจ เป็นต้น</p>
+            <p class="text-md font-bold mt-3">วิธีการดูแลตนเองให้ปลอดภัยจากฝุ่น PM2.5</p>
+            <ul class="list-decimal list-inside p-6 text-gray-700">
+                <li class="mb-4">
+                  สวมหน้ากาก N95 หรือหน้ากากอนามัยอย่างถูกวิธี: คลุมจมูกลงมาถึงใต้คาง และต้องแนบสนิทกับใบหน้า เพื่อป้องกันฝุ่น
+                </li>
+                <li class="mb-4">
+                  เลี่ยงกิจกรรมนอกบ้าน: โดยเฉพาะในบริเวณที่มีค่ามลพิษอากาศสูง
+                </li>
+                <li class="mb-4">
+                  หมั่นทำความสะอาดบ้าน: เพื่อลดการสะสมของฝุ่นภายในบ้าน
+                </li>
+                <li class="mb-4">
+                  เลี่ยงกิจกรรมที่ก่อให้เกิดฝุ่น PM2.5: เช่น การเผาขยะ การเผาหญ้า การจอดรถติดเครื่องยนต์ไว้เป็นระยะเวลานาน
+                </li>
+                <li>
+                  ตรวจเช็คสภาพรถยนต์: ให้อยู่ในสภาวะปกติ ไม่ก่อควันดำ
+                </li>
+              </ul>
+
+              
+            <p class="text-gray-700">หากพบอาการผิดปกติของร่างกาย ให้รีบพบแพทย์ หากพบว่าตนเองมีอาการผิดปกติของร่างกาย เช่น ไอ เหนื่อย แน่นหน้าอก ควรปรึกษาแพทย์ทันที และที่สำคัญ ควรติดตามข้อมูลข่าวสารด้านมลพิษทางอากาศเป็นประจำ เพื่อป้องกันฝุ่นละอองและความปลอดภัยต่อสุขภาพของตนเองอย่างเหมาะสม</p>
+            
+            <p class="text-black font-bold mt-3">อ้างอิง: กรมการแพทย์ (ข้อมูล ณ วันที่ 19 มกราคม 2566)</p>
+        </div>
+    </section>
+    <script src="/src/script.js"></script>
+
+    
+</body>
+</html>
